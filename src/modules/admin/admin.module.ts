@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../../entities/user.entity';
 import { Role } from '../../entities/role.entity';
@@ -26,4 +26,8 @@ import { RolesModule } from '../roles/roles.module';
   controllers: [AdminController],
   exports: [AdminService],
 })
-export class AdminModule {}
+export class AdminModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    // This will be configured in main.ts after AdminJS is initialized
+  }
+}

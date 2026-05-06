@@ -1,12 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { AppModule } from './app.module';
 import { DataSource } from 'typeorm';
 import { Role } from './entities/role.entity';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors();
 
@@ -48,6 +49,8 @@ async function bootstrap() {
   await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
   console.log(`Swagger documentation: http://localhost:${port}/api`);
-  console.log(`Admin panel: http://localhost:${port}/admin`);
+  console.log(
+    `Admin API: http://localhost:${port}/admin/* (requires JWT with ADMIN role)`,
+  );
 }
 bootstrap();

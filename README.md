@@ -1,98 +1,268 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# API de Gestión de Usuarios
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST desarrollada con NestJS para la gestión de usuarios, perfiles, direcciones y atributos personalizados.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tabla de Contenidos
 
-## Description
+- [Características](#características)
+- [Tecnologías](#tecnologías)
+- [Requisitos](#requisitos)
+- [Instalación](#instalación)
+- [Configuración](#configuración)
+- [Ejecutar el Proyecto](#ejecutar-el-proyecto)
+- [Documentación API](#documentación-api)
+- [Endpoints Disponibles](#endpoints-disponibles)
+- [Sistema de Roles](#sistema-de-roles)
+- [Tests](#tests)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Licencia](#licencia)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## Características
 
-```bash
-$ npm install
-```
+- ✅ Autenticación JWT con Argon2
+- ✅ CRUD completo de usuarios
+- ✅ Perfiles de usuario
+- ✅ Gestión de direcciones (múltiples por usuario)
+- ✅ Atributos personalizados (JSONB)
+- ✅ Sistema de roles (ADMIN, USER, EDITOR)
+- ✅ Soft delete para usuarios
+- ✅ Documentación Swagger/OpenAPI
+- ✅ Tests unitarios
 
-## Compile and run the project
+---
 
-```bash
-# development
-$ npm run start
+## Tecnologías
 
-# watch mode
-$ npm run start:dev
+| Tecnología      | Versión |
+| --------------- | ------- |
+| NestJS          | 11.x    |
+| TypeORM         | Latest  |
+| PostgreSQL      | 15+     |
+| Argon2          | Latest  |
+| JWT             | Latest  |
+| Swagger/OpenAPI | Latest  |
 
-# production mode
-$ npm run start:prod
-```
+---
 
-## Run tests
+## Requisitos
 
-```bash
-# unit tests
-$ npm run test
+- Node.js 20.x
+- PostgreSQL 15+
+- npm o yarn
 
-# e2e tests
-$ npm run test:e2e
+---
 
-# test coverage
-$ npm run test:cov
-```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Instalación
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Instalar dependencias
+npm install
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## Configuración
 
-Check out a few resources that may come in handy when working with NestJS:
+### Variables de Entorno
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Crear archivo `.env` en la raíz del proyecto:
 
-## Support
+```env
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=api_usuarios
+DB_PASSWORD=tu_password
+DB_DATABASE=db_api_usuarios
+DB_SCHEMA=db_api_usuarios
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+# JWT
+JWT_SECRET=tu-secret-jwt-muy-seguro
+JWT_EXPIRATION=7d
 
-## Stay in touch
+# App
+PORT=3000
+NODE_ENV=development
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Admin (para acceso futuro al panel)
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=admin123
+```
 
-## License
+### Base de Datos
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+1. Crear la base de datos:
+
+```sql
+CREATE DATABASE db_api_usuarios;
+```
+
+2. Crear el esquema:
+
+```sql
+\c db_api_usuarios;
+CREATE SCHEMA db_api_usuarios;
+```
+
+---
+
+## Ejecutar el Proyecto
+
+```bash
+# Desarrollo (con hot-reload)
+npm run start:dev
+
+# Producción
+npm run build
+npm run start:prod
+```
+
+---
+
+## Documentación API
+
+Una vez iniciado el servidor, acceder a:
+
+| Recurso    | URL                       |
+| ---------- | ------------------------- |
+| Swagger UI | http://localhost:3000/api |
+
+---
+
+## Endpoints Disponibles
+
+### Autenticación
+
+| Método | Endpoint         | Descripción             |
+| ------ | ---------------- | ----------------------- |
+| POST   | `/auth/register` | Registrar nuevo usuario |
+| POST   | `/auth/login`    | Iniciar sesión          |
+
+### Usuarios
+
+| Método | Endpoint             | Descripción                    |
+| ------ | -------------------- | ------------------------------ |
+| GET    | `/users`             | Listar todos los usuarios      |
+| GET    | `/users/:id`         | Obtener usuario por ID         |
+| PATCH  | `/users/:id`         | Actualizar usuario             |
+| DELETE | `/users/:id`         | Eliminar usuario (soft delete) |
+| PATCH  | `/users/:id/restore` | Restaurar usuario eliminado    |
+
+### Roles
+
+| Método | Endpoint     | Descripción            |
+| ------ | ------------ | ---------------------- |
+| GET    | `/roles`     | Listar todos los roles |
+| GET    | `/roles/:id` | Obtener rol por ID     |
+
+### Perfiles
+
+| Método | Endpoint            | Descripción               |
+| ------ | ------------------- | ------------------------- |
+| GET    | `/profiles/:userId` | Obtener perfil de usuario |
+| PATCH  | `/profiles/:userId` | Actualizar perfil         |
+
+### Direcciones
+
+| Método | Endpoint                  | Descripción                   |
+| ------ | ------------------------- | ----------------------------- |
+| GET    | `/addresses/user/:userId` | Listar direcciones de usuario |
+| POST   | `/addresses/user/:userId` | Crear dirección               |
+| PATCH  | `/addresses/:id`          | Actualizar dirección          |
+| DELETE | `/addresses/:id`          | Eliminar dirección            |
+
+### Atributos de Usuario
+
+| Método | Endpoint                               | Descripción                    |
+| ------ | -------------------------------------- | ------------------------------ |
+| GET    | `/user-attributes/:userId`             | Obtener atributos              |
+| PATCH  | `/user-attributes/:userId`             | Actualizar atributos           |
+| PATCH  | `/user-attributes/:userId/custom-data` | Actualizar custom_data (JSONB) |
+
+### Admin (requiere rol ADMIN)
+
+| Método | Endpoint                | Descripción            |
+| ------ | ----------------------- | ---------------------- |
+| GET    | `/admin/users`          | Listar usuarios        |
+| GET    | `/admin/users/:id`      | Obtener usuario        |
+| POST   | `/admin/users`          | Crear usuario          |
+| PATCH  | `/admin/users/:id`      | Actualizar usuario     |
+| DELETE | `/admin/users/:id`      | Eliminar usuario       |
+| PATCH  | `/admin/users/:id/role` | Cambiar rol de usuario |
+| GET    | `/admin/roles`          | Listar roles           |
+
+---
+
+## Sistema de Roles
+
+| ID  | Nombre | Descripción                              |
+| --- | ------ | ---------------------------------------- |
+| 1   | ADMIN  | Administrador con acceso completo        |
+| 2   | USER   | Usuario regular con acceso básico        |
+| 3   | EDITOR | Editor con acceso a gestión de contenido |
+
+### Regla de Registro
+
+- El **primer usuario** registrado en el sistema se crea automáticamente con rol **ADMIN**
+- Los usuarios subsiguientes se crean con rol **USER**
+
+---
+
+## Tests
+
+```bash
+# Ejecutar tests unitarios
+npm run test
+
+# Tests con coverage
+npm run test:cov
+
+# Tests en modo watch
+npm run test:watch
+```
+
+---
+
+## Estructura del Proyecto
+
+```
+src/
+├── config/                 # Configuración
+├── common/
+│   ├── decorators/         # Decoradores personalizados
+│   ├── guards/            # Guards (RolesGuard)
+│   └── interceptors/      # Interceptores (Audit)
+├── entities/               # Entidades TypeORM
+│   ├── user.entity.ts
+│   ├── role.entity.ts
+│   ├── profile.entity.ts
+│   ├── address.entity.ts
+│   ├── user-attribute.entity.ts
+│   └── audit-log.entity.ts
+├── modules/
+│   ├── auth/              # Autenticación
+│   ├── users/             # Gestión de usuarios
+│   ├── roles/             # Gestión de roles
+│   ├── profiles/          # Perfiles de usuario
+│   ├── addresses/         # Direcciones
+│   ├── user-attributes/   # Atributos personalizados
+│   ├── audit-logs/       # Logs de auditoría
+│   └── admin/             # Endpoints de administración
+├── app.module.ts
+├── main.ts
+└── app.controller.ts
+```
+
+---
+
+## Licencia
+
+MIT License
+
+---
+
+## Autor
+
+Desarrollado con ❤️ usando NestJS

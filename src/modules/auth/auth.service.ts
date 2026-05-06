@@ -29,7 +29,13 @@ export class AuthService {
       throw new UnauthorizedException('Email already exists');
     }
 
-    const defaultRole = await this.rolesRepository.findOne({
+    const userCount = await this.usersRepository.count();
+
+    const adminRole = await this.rolesRepository.findOne({
+      where: { name: 'ADMIN' },
+    });
+
+    const userRole = await this.rolesRepository.findOne({
       where: { name: 'USER' },
     });
 
@@ -38,7 +44,7 @@ export class AuthService {
     const user = this.usersRepository.create({
       email: registerDto.email,
       passwordHash,
-      roleId: defaultRole?.id || 2,
+      roleId: userCount === 0 ? adminRole?.id || 1 : userRole?.id || 2,
     });
 
     const savedUser = await this.usersRepository.save(user);

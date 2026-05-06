@@ -18,6 +18,7 @@ describe('AuthService', () => {
       findOne: jest.fn(),
       create: jest.fn(),
       save: jest.fn(),
+      count: jest.fn().mockResolvedValue(1),
       manager: {
         create: jest.fn().mockImplementation((entity, data) => data),
         save: jest.fn().mockResolvedValue({ id: 'uuid' }),
