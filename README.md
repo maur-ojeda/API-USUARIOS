@@ -1,268 +1,258 @@
-# API de Gestión de Usuarios
+# API-USUARIOS
 
-API REST desarrollada con NestJS para la gestión de usuarios, perfiles, direcciones y atributos personalizados.
-
-## Tabla de Contenidos
-
-- [Características](#características)
-- [Tecnologías](#tecnologías)
-- [Requisitos](#requisitos)
-- [Instalación](#instalación)
-- [Configuración](#configuración)
-- [Ejecutar el Proyecto](#ejecutar-el-proyecto)
-- [Documentación API](#documentación-api)
-- [Endpoints Disponibles](#endpoints-disponibles)
-- [Sistema de Roles](#sistema-de-roles)
-- [Tests](#tests)
-- [Estructura del Proyecto](#estructura-del-proyecto)
-- [Licencia](#licencia)
+**Identity & Access Management System** — A robust identity management, profiling, and audit system for SaaS platforms, built with Clean Architecture principles on NestJS.
 
 ---
 
-## Características
+## Tech Stack
 
-- ✅ Autenticación JWT con Argon2
-- ✅ CRUD completo de usuarios
-- ✅ Perfiles de usuario
-- ✅ Gestión de direcciones (múltiples por usuario)
-- ✅ Atributos personalizados (JSONB)
-- ✅ Sistema de roles (ADMIN, USER, EDITOR)
-- ✅ Soft delete para usuarios
-- ✅ Documentación Swagger/OpenAPI
-- ✅ Tests unitarios
+| Layer | Technology |
+|-------|-----------|
+| Framework | NestJS 11 (TypeScript) |
+| ORM | TypeORM (Data Mapper pattern) |
+| Database | PostgreSQL 15+ |
+| Authentication | JWT + Argon2 |
+| Admin Dashboard | AdminJS |
+| API Docs | Swagger / OpenAPI |
+| Auth Strategies | PassportJS |
+| Validation | class-validator + class-transformer |
 
----
+## Features
 
-## Tecnologías
+- **User registration** with simultaneous Profile + UserAttributes creation
+- **Multi-address management** — billing, shipping, home with ISO country codes
+- **Role-Based Access Control (RBAC)** — custom NestJS Guards (`RolesGuard`)
+- **AdminJS dashboard** at `/admin` (role-protected)
+- **Dynamic JSONB attributes** for extensible user data (`preferences`, `custom_data`)
+- **Automatic audit logging** interceptor for all admin mutations
+- **Soft delete** — users are deactivated, never hard-deleted
+- **Swagger UI** at `/api`
 
-| Tecnología      | Versión |
-| --------------- | ------- |
-| NestJS          | 11.x    |
-| TypeORM         | Latest  |
-| PostgreSQL      | 15+     |
-| Argon2          | Latest  |
-| JWT             | Latest  |
-| Swagger/OpenAPI | Latest  |
-
----
-
-## Requisitos
-
-- Node.js 20.x
-- PostgreSQL 15+
-- npm o yarn
-
----
-
-## Instalación
-
-```bash
-# Instalar dependencias
-npm install
-```
-
----
-
-## Configuración
-
-### Variables de Entorno
-
-Crear archivo `.env` en la raíz del proyecto:
-
-```env
-# Database
-DB_HOST=localhost
-DB_PORT=5432
-DB_USERNAME=api_usuarios
-DB_PASSWORD=tu_password
-DB_DATABASE=db_api_usuarios
-DB_SCHEMA=db_api_usuarios
-
-# JWT
-JWT_SECRET=tu-secret-jwt-muy-seguro
-JWT_EXPIRATION=7d
-
-# App
-PORT=3000
-NODE_ENV=development
-
-# Admin (para acceso futuro al panel)
-ADMIN_EMAIL=admin@example.com
-ADMIN_PASSWORD=admin123
-```
-
-### Base de Datos
-
-1. Crear la base de datos:
-
-```sql
-CREATE DATABASE db_api_usuarios;
-```
-
-2. Crear el esquema:
-
-```sql
-\c db_api_usuarios;
-CREATE SCHEMA db_api_usuarios;
-```
-
----
-
-## Ejecutar el Proyecto
-
-```bash
-# Desarrollo (con hot-reload)
-npm run start:dev
-
-# Producción
-npm run build
-npm run start:prod
-```
-
----
-
-## Documentación API
-
-Una vez iniciado el servidor, acceder a:
-
-| Recurso    | URL                       |
-| ---------- | ------------------------- |
-| Swagger UI | http://localhost:3000/api |
-
----
-
-## Endpoints Disponibles
-
-### Autenticación
-
-| Método | Endpoint         | Descripción             |
-| ------ | ---------------- | ----------------------- |
-| POST   | `/auth/register` | Registrar nuevo usuario |
-| POST   | `/auth/login`    | Iniciar sesión          |
-
-### Usuarios
-
-| Método | Endpoint             | Descripción                    |
-| ------ | -------------------- | ------------------------------ |
-| GET    | `/users`             | Listar todos los usuarios      |
-| GET    | `/users/:id`         | Obtener usuario por ID         |
-| PATCH  | `/users/:id`         | Actualizar usuario             |
-| DELETE | `/users/:id`         | Eliminar usuario (soft delete) |
-| PATCH  | `/users/:id/restore` | Restaurar usuario eliminado    |
-
-### Roles
-
-| Método | Endpoint     | Descripción            |
-| ------ | ------------ | ---------------------- |
-| GET    | `/roles`     | Listar todos los roles |
-| GET    | `/roles/:id` | Obtener rol por ID     |
-
-### Perfiles
-
-| Método | Endpoint            | Descripción               |
-| ------ | ------------------- | ------------------------- |
-| GET    | `/profiles/:userId` | Obtener perfil de usuario |
-| PATCH  | `/profiles/:userId` | Actualizar perfil         |
-
-### Direcciones
-
-| Método | Endpoint                  | Descripción                   |
-| ------ | ------------------------- | ----------------------------- |
-| GET    | `/addresses/user/:userId` | Listar direcciones de usuario |
-| POST   | `/addresses/user/:userId` | Crear dirección               |
-| PATCH  | `/addresses/:id`          | Actualizar dirección          |
-| DELETE | `/addresses/:id`          | Eliminar dirección            |
-
-### Atributos de Usuario
-
-| Método | Endpoint                               | Descripción                    |
-| ------ | -------------------------------------- | ------------------------------ |
-| GET    | `/user-attributes/:userId`             | Obtener atributos              |
-| PATCH  | `/user-attributes/:userId`             | Actualizar atributos           |
-| PATCH  | `/user-attributes/:userId/custom-data` | Actualizar custom_data (JSONB) |
-
-### Admin (requiere rol ADMIN)
-
-| Método | Endpoint                | Descripción            |
-| ------ | ----------------------- | ---------------------- |
-| GET    | `/admin/users`          | Listar usuarios        |
-| GET    | `/admin/users/:id`      | Obtener usuario        |
-| POST   | `/admin/users`          | Crear usuario          |
-| PATCH  | `/admin/users/:id`      | Actualizar usuario     |
-| DELETE | `/admin/users/:id`      | Eliminar usuario       |
-| PATCH  | `/admin/users/:id/role` | Cambiar rol de usuario |
-| GET    | `/admin/roles`          | Listar roles           |
-
----
-
-## Sistema de Roles
-
-| ID  | Nombre | Descripción                              |
-| --- | ------ | ---------------------------------------- |
-| 1   | ADMIN  | Administrador con acceso completo        |
-| 2   | USER   | Usuario regular con acceso básico        |
-| 3   | EDITOR | Editor con acceso a gestión de contenido |
-
-### Regla de Registro
-
-- El **primer usuario** registrado en el sistema se crea automáticamente con rol **ADMIN**
-- Los usuarios subsiguientes se crean con rol **USER**
-
----
-
-## Tests
-
-```bash
-# Ejecutar tests unitarios
-npm run test
-
-# Tests con coverage
-npm run test:cov
-
-# Tests en modo watch
-npm run test:watch
-```
-
----
-
-## Estructura del Proyecto
+## Architecture
 
 ```
 src/
-├── config/                 # Configuración
+├── modules/
+│   ├── users/              # User CRUD & management
+│   ├── auth/               # JWT authentication + Argon2 hashing
+│   ├── profiles/           # User profile management
+│   ├── addresses/          # Multi-address support
+│   ├── roles/              # Role management (ADMIN, USER, EDITOR)
+│   ├── admin/              # Admin endpoints (role-protected)
+│   ├── adminjs/            # AdminJS dashboard integration
+│   ├── audit-logs/         # Automatic audit trail
+│   └── user-attributes/    # Dynamic JSONB attributes
 ├── common/
-│   ├── decorators/         # Decoradores personalizados
-│   ├── guards/            # Guards (RolesGuard)
-│   └── interceptors/      # Interceptores (Audit)
-├── entities/               # Entidades TypeORM
+│   ├── decorators/         # @Roles() decorator
+│   ├── guards/             # RolesGuard
+│   └── interceptors/       # Audit interceptor
+├── config/                 # TypeORM configuration
+├── entities/               # TypeORM entities
 │   ├── user.entity.ts
 │   ├── role.entity.ts
 │   ├── profile.entity.ts
 │   ├── address.entity.ts
 │   ├── user-attribute.entity.ts
 │   └── audit-log.entity.ts
-├── modules/
-│   ├── auth/              # Autenticación
-│   ├── users/             # Gestión de usuarios
-│   ├── roles/             # Gestión de roles
-│   ├── profiles/          # Perfiles de usuario
-│   ├── addresses/         # Direcciones
-│   ├── user-attributes/   # Atributos personalizados
-│   ├── audit-logs/       # Logs de auditoría
-│   └── admin/             # Endpoints de administración
 ├── app.module.ts
-├── main.ts
-└── app.controller.ts
+└── main.ts
 ```
 
----
+## Data Model
 
-## Licencia
+```
+┌─────────────┐     ┌─────────────┐
+│    roles     │     │    users     │
+├─────────────┤     ├─────────────┤
+│ id (PK)     │◀────│ role_id (FK) │
+│ name        │     │ id (UUID PK) │
+│ description │     │ email (UQ)   │
+└─────────────┘     │ password_hash│
+                    │ is_active    │
+                    │ created_at   │
+                    │ deleted_at   │
+                    └──────┬───────┘
+                           │ 1:1
+              ┌────────────┼──────────────┐
+              │            │              │
+    ┌─────────┴──┐  ┌─────┴──────┐  ┌────┴─────────────┐
+    │  profiles   │  │  addresses  │  │ user_attributes  │
+    ├────────────┤  ├─────────────┤  ├─────────────────┤
+    │ id (UUID) │  │ id (UUID)   │  │ id (UUID)       │
+    │ user_id   │  │ user_id     │  │ user_id         │
+    │ first_name│  │ type        │  │ preferences(↑)  │
+    │ last_name │  │ street      │  │ custom_data(↑)  │
+    │ phone     │  │ city        │  │ updated_at      │
+    │ avatar_url│  │ state       │  └─────────────────┘
+    └────────────┘  │ zip_code    │        ↑ JSONB
+                    │ country(ISO)│
+                    │ is_main     │
+                    └─────────────┘
+                           │
+                    ┌──────┴───────┐
+                    │  audit_logs  │
+                    ├──────────────┤
+                    │ id (UUID)    │
+                    │ admin_id(FK) │
+                    │ action       │
+                    │ target_user  │
+                    │ details(↑)   │
+                    │ created_at   │
+                    └──────────────┘
+                           ↑ JSONB
+```
 
-MIT License
+## Security Layers
 
----
+1. **Argon2** password hashing (memory-hard, resistant to GPU attacks)
+2. **JWT** token-based API authentication (PassportJS strategy)
+3. **RBAC** with custom `RolesGuard` decorator (`@Roles()`)
+4. **DTO strict validation** via `class-validator` on all inputs
+5. **Automatic audit trail** — all admin mutations logged with diffs
 
-## Autor
+## Prerequisites
 
-Desarrollado con ❤️ usando NestJS
+- Node.js 20+
+- PostgreSQL 15+
+- npm
+
+## Setup
+
+```bash
+npm install
+cp .env.example .env
+# Edit .env with your database and JWT credentials
+```
+
+### Environment Variables
+
+```env
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=api_usuarios
+DB_PASSWORD=your_password
+DB_DATABASE=db_api_usuarios
+DB_SCHEMA=db_api_usuarios
+
+JWT_SECRET=your-jwt-secret
+JWT_EXPIRATION=7d
+
+PORT=3000
+NODE_ENV=development
+```
+
+### Database
+
+```sql
+CREATE DATABASE db_api_usuarios;
+\c db_api_usuarios;
+CREATE SCHEMA db_api_usuarios;
+```
+
+## Running
+
+```bash
+npm run start:dev
+```
+
+| Command | Description |
+|---------|------------|
+| `npm run start:dev` | Dev server with hot-reload |
+| `npm run build` | Production build |
+| `npm run start:prod` | Run production build |
+| `npm run test` | Unit tests |
+| `npm run test:cov` | Coverage report |
+| `npm run lint` | ESLint check |
+
+## API Endpoints
+
+### Auth
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| POST | `/auth/register` | Register user (creates Profile + UserAttributes) |
+| POST | `/auth/login` | Login, returns JWT |
+
+### Users
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| GET | `/users` | List all users |
+| GET | `/users/:id` | Get user by ID |
+| PATCH | `/users/:id` | Update user |
+| DELETE | `/users/:id` | Soft delete |
+| PATCH | `/users/:id/restore` | Restore soft-deleted user |
+
+### Profiles
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| GET | `/profiles/:userId` | Get user profile |
+| PATCH | `/profiles/:userId` | Update profile |
+
+### Addresses
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| GET | `/addresses/user/:userId` | List user addresses |
+| POST | `/addresses/user/:userId` | Create address |
+| PATCH | `/addresses/:id` | Update address |
+| DELETE | `/addresses/:id` | Delete address |
+
+### User Attributes
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| GET | `/user-attributes/:userId` | Get attributes |
+| PATCH | `/user-attributes/:userId` | Update attributes |
+| PATCH | `/user-attributes/:userId/custom-data` | Update custom JSONB data |
+
+### Roles
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| GET | `/roles` | List all roles |
+| GET | `/roles/:id` | Get role by ID |
+
+### Admin (requires ADMIN role)
+
+| Method | Endpoint | Description |
+|--------|----------|------------|
+| GET | `/admin/users` | List users |
+| GET | `/admin/users/:id` | Get user |
+| POST | `/admin/users` | Create user |
+| PATCH | `/admin/users/:id` | Update user |
+| DELETE | `/admin/users/:id` | Delete user |
+| PATCH | `/admin/users/:id/role` | Change user role |
+| GET | `/admin/roles` | List roles |
+
+## Role System
+
+| ID | Role | Description |
+|----|------|------------|
+| 1 | ADMIN | Full access — admin endpoints + dashboard |
+| 2 | USER | Standard access — own data only |
+| 3 | EDITOR | Content management access |
+
+The **first registered user** is automatically assigned the **ADMIN** role. Subsequent users get **USER**.
+
+## Testing
+
+```bash
+npm run test          # Unit tests
+npm run test:cov      # Coverage
+npm run test:watch    # Watch mode
+npm run test:e2e      # E2E tests
+```
+
+## Documentation
+
+| Resource | URL |
+|----------|-----|
+| Swagger UI | `http://localhost:3000/api` |
+| Postman Collection | `postman/collection.json` |
+| DBML Schema | `db-api-users.DBML` |
+
+## License
+
+UNLICENSED — Private project.
